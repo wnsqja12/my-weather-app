@@ -1,8 +1,11 @@
-// script.js
+// script.js (수정된 fetch 함수)
 
-// 🚨 임시 API Key (실제 Key로 대체하거나 5단계에서 환경 변수로 변경 예정)
-const API_KEY = "abb1ad0ecfd27d713c185f1eabcecda7";
-const BASE_URL = "https://api.openweathermap.org/data/2.5/";
+// 🚨 API_KEY와 BASE_URL 변수를 제거합니다. (보안 목적)
+// const API_KEY = "..."; 
+// const BASE_URL = "https://api.openweathermap.org/data/2.5/"; 
+
+// 새로운 BASE_URL: Vercel 서버리스 함수 주소
+const PROXY_BASE_URL = '/api/weather';
 
 // 자주 사용할 DOM 요소 (HTML에서 id로 지정한 요소들)
 const cityInput = document.getElementById('city-input');
@@ -27,7 +30,7 @@ let currentUnit = 'metric'; // 'metric' (섭씨) 또는 'imperial' (화씨)
  */
 async function fetchCurrentWeather(city) {
     // 1. API URL 구성
-    const currentWeatherUrl = `${BASE_URL}weather?q=${city}&appid=${API_KEY}&units=${currentUnit}&lang=kr`;
+    const currentWeatherUrl = `${PROXY_BASE_URL}?city=${city}&units=${currentUnit}&endpoint=weather`;
     
     try {
         // 2. 데이터 요청 (fetch)
@@ -136,8 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
  * 5일 예보 데이터를 가져와 렌더링하는 함수
  */
 async function fetchForecast(city) {
-    const forecastUrl = `${BASE_URL}forecast?q=${city}&appid=${API_KEY}&units=${currentUnit}&lang=kr`;
-    
+    const forecastUrl = `${PROXY_BASE_URL}?city=${city}&units=${currentUnit}&endpoint=forecast`;
     try {
         const response = await fetch(forecastUrl);
         if (!response.ok) throw new Error('예보 데이터를 가져올 수 없습니다.');

@@ -1,75 +1,105 @@
 /* style.css */
 
-/* 폰트 및 기본 마진/패딩 초기화 */
+/* style.css (기존 * 초기화 부분 수정) */
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: sans-serif; /* 나중에 원하는 폰트로 변경하세요 */
+    /* 폰트 변경: Noto Sans KR 사용 */
+    font-family: 'Noto Sans KR', sans-serif; 
 }
-
+/* body 스타일 유지 또는 조금 더 어둡게 설정 */
 body {
-    background-color: #f4f4f9; /* 연한 배경색 */
-    color: #333;
+    background-color: #e9ecef; /* 배경색을 약간 더 어두운 회색으로 변경 */
+    color: #343a40; /* 기본 글씨색 */
     display: flex;
-    justify-content: center; /* 중앙 정렬 */
-    padding: 20px;
+    justify-content: center; 
+    align-items: flex-start; /* 상단 정렬 */
+    min-height: 100vh; /* 전체 화면 높이 사용 */
+    padding: 30px 10px;
 }
 
-/* 전체 컨테이너: 모바일 최대 폭 설정 */
 #app-container {
     width: 100%;
-    max-width: 450px; /* Mobile First: 모바일 화면에 최적화 */
+    max-width: 450px; 
     background: white;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 12px;
-    padding: 20px;
+    /* 그림자 깊게, 부드럽게 */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); 
+    border-radius: 18px; /* 모서리 더 둥글게 */
+    padding: 25px;
+    transition: all 0.5s ease-in-out; /* 배경 변화 시 부드러운 전환 효과 */
 }
-/* Header 및 검색 상자 스타일링 */
+/* style.css (기존 #search-box 수정) */
 #search-box {
     display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
+    gap: 8px;
+    margin-bottom: 30px;
 }
 
 #city-input {
-    flex-grow: 1; /* 입력창이 최대한 공간을 차지하도록 */
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
+    flex-grow: 1; 
+    padding: 10px 15px;
+    border: 2px solid #ced4da; /* 테두리 굵기 증가 */
+    border-radius: 8px;
     font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+#city-input:focus {
+    border-color: #007bff; /* 포커스 시 색상 변경 */
+    outline: none;
 }
 
 #search-button, #unit-toggle-button {
-    padding: 10px 15px;
+    padding: 10px 12px; /* 패딩 조정 */
     border: none;
-    border-radius: 6px;
-    background-color: #007bff; /* 파란색 계열 강조 */
+    border-radius: 8px;
+    background-color: #28a745; /* 검색 버튼을 초록색 계열로 변경 */
     color: white;
     cursor: pointer;
-    font-weight: bold;
+    font-weight: 700;
+    transition: background-color 0.3s;
 }
-/* 현재 날씨 섹션 */
+
+#search-button:hover, #unit-toggle-button:hover {
+    background-color: #1e7e34;
+}
+/* style.css (기존 #current-weather 수정) */
 #current-weather {
     text-align: center;
-    padding: 20px 0;
+    padding: 15px 0 30px 0;
+    border-bottom: 1px solid #dee2e6; /* 구분선 추가 */
+    margin-bottom: 20px;
 }
 
 #city-name {
-    font-size: 2em;
-    margin-bottom: 10px;
+    font-size: 2.5em; /* 도시 이름 크기 키우기 */
+    font-weight: 700;
+    margin-bottom: 5px;
 }
 
 #main-info #temp {
-    font-size: 5em; /* 온도를 가장 크게 표시 */
+    font-size: 6em; /* 온도 글씨 극대화 */
     font-weight: 300;
     line-height: 1;
+    color: #007bff; /* 온도에 색상 강조 */
 }
 
 #description {
-    font-size: 1.5em;
-    color: #555;
-    margin-top: 5px;
+    font-size: 1.6em;
+    color: #6c757d;
+    margin-top: 10px;
+    font-weight: 400;
+}
+
+/* 아이콘 자리: 아이콘이 더 중앙에 오도록 */
+#icon-placeholder {
+    height: 100px; /* 아이콘 영역 높이 고정 */
+    margin: 10px auto;
+}
+#weather-icon {
+    width: 100px;
+    height: 100px;
 }
 
 /* 부가 정보 (습도/풍속) */
@@ -77,34 +107,65 @@ body {
     display: flex;
     justify-content: space-around;
     padding: 15px 0;
-    border-top: 1px solid #eee;
     margin-top: 20px;
+    font-size: 1em;
+    font-weight: 400;
+    background-color: #f8f9fa; /* 부가 정보 영역 배경색 */
+    border-radius: 8px;
 }
-/* 5일 예보 섹션 */
-#forecast {
-    margin-top: 20px;
+#details-info p {
+    flex: 1;
+    text-align: center;
+    padding: 0 10px;
+    border-right: 1px solid #e9ecef;
+}
+#details-info p:last-child {
+    border-right: none;
+}
+/* style.css (기존 #forecast-cards-container 및 .forecast-card 수정) */
+#forecast h3 {
+    font-size: 1.4em;
+    margin-bottom: 15px;
+    color: #343a40;
+    border-left: 4px solid #007bff; /* 제목에 포인트 라인 추가 */
+    padding-left: 10px;
 }
 
 #forecast-cards-container {
     display: flex;
-    overflow-x: auto; /* 가로 스크롤 허용 */
-    gap: 15px;
-    padding-bottom: 10px; /* 스크롤바 때문에 여백 추가 */
+    overflow-x: auto; 
+    gap: 12px; /* 간격 줄이기 */
+    padding: 10px 0;
+    padding-bottom: 20px; /* 스크롤 공간 확보 */
 }
 
-/* JS가 동적으로 생성할 개별 예보 카드 스타일 */
+/* 개별 예보 카드 스타일 */
 .forecast-card {
-    min-width: 100px; /* 모바일에서 카드 폭 지정 */
+    min-width: 100px; 
     text-align: center;
-    padding: 15px 10px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background: #fafafa;
+    padding: 15px 5px;
+    border: none;
+    border-radius: 12px;
+    background: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08); /* 카드에 그림자 추가 */
+    transition: transform 0.2s;
+    flex-shrink: 0; /* 카드가 찌그러지지 않도록 */
+}
+
+.forecast-card:hover {
+    transform: translateY(-3px); /* 마우스 오버 시 살짝 떠오르는 효과 */
+}
+
+.forecast-card h4 {
+    font-size: 1.1em;
+    color: #495057;
+    margin-bottom: 5px;
 }
 
 .forecast-card .forecast-temp {
-    font-size: 1.2em;
-    font-weight: bold;
+    font-size: 1.5em;
+    font-weight: 700;
+    color: #007bff;
     margin: 5px 0;
 }
 /* Tablet 및 Desktop 레이아웃 */
@@ -125,11 +186,15 @@ body {
 /* style.css (기존 코드 아래에 추가) */
 
 /* 1. 최근 검색어 버튼 레이아웃 */
-#recent-city-buttons {
-    display: flex;
-    flex-wrap: wrap; /* 버튼이 많아지면 줄바꿈 처리 */
-    gap: 10px;
-    margin-top: 10px;
+/* style.css (기존 #recent-city-buttons 수정) */
+#recent-searches {
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid #dee2e6; /* 구분선 */
+}
+#recent-searches h3 {
+    font-size: 1.2em;
+    margin-bottom: 10px;
 }
 
 .recent-city-button {
@@ -168,4 +233,13 @@ body {
 .night .recent-city-button:hover {
     background-color: #e8eaf6;
     color: #1a237e;
+}
+
+/* footer 개선 */
+#logo-footer {
+    text-align: center;
+    margin-top: 30px;
+    padding-top: 15px;
+    color: #adb5bd;
+    font-size: 0.8em;
 }
