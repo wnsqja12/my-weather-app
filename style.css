@@ -243,3 +243,33 @@ body {
     color: #adb5bd;
     font-size: 0.8em;
 }
+
+.quick-search-section {
+    margin-bottom: 25px; /* 검색창과 날씨 정보 사이 여백 */
+    padding: 10px 0;
+    border-bottom: 1px solid #e9ecef; /* 시각적 구분선 */
+}
+
+#quick-city-buttons {
+    display: flex;
+    flex-wrap: wrap; /* 버튼이 많아지면 다음 줄로 이동 */
+    gap: 8px; /* 버튼 간격 */
+    justify-content: flex-start; /* 버튼을 왼쪽부터 정렬 */
+}
+
+.quick-city-button {
+    /* 기존 recent-city-button 스타일과 유사하게 설정 */
+    padding: 6px 10px; 
+    border: 1px solid #17a2b8; /* 청록색 계열로 버튼 색상 변경 */
+    background-color: transparent;
+    color: #17a2b8;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: all 0.2s;
+}
+
+.quick-city-button:hover {
+    background-color: #17a2b8;
+    color: white;
+}

@@ -22,6 +22,14 @@ const windSpeedDisplay = document.getElementById('wind-speed');
 const forecastContainer = document.getElementById('forecast-cards-container');
 const recentButtonsContainer = document.getElementById('recent-city-buttons');
 
+// script.js (전역 변수 영역에 추가)
+
+// 퀵 검색을 위한 한국 주요 도시 목록 (영문으로 검색)
+const KOREAN_MAJOR_CITIES = ['Seoul', 'Busan', 'Incheon', 'Daegu', 'Daejeon', 'Gwangju', 'Ulsan', 'Jeju'];
+
+// 퀵 검색 버튼 영역 DOM 요소
+const quickButtonsContainer = document.getElementById('quick-city-buttons');
+
 let currentUnit = 'metric'; // 'metric' (섭씨) 또는 'imperial' (화씨)
 
 /**
@@ -156,6 +164,7 @@ unitToggleButton.addEventListener('click', () => {
 
 // 페이지 로드 시 기본 도시 날씨 표시 (예: 서울)
 document.addEventListener('DOMContentLoaded', () => {
+    renderQuickSearchButtons();
     fetchCurrentWeather('Seoul');
     fetchForecast('Seoul');
     loadRecentSearches(); // LocalStorage에서 최근 검색어 로드
@@ -316,4 +325,40 @@ function recommendOutfit(temp) {
     if (extensionFeatureDisplay) {
         extensionFeatureDisplay.innerHTML = `**오늘의 패션 추천:** ${recommendation}`;
     }
+}
+
+// script.js (함수 정의 영역에 추가)
+
+/**
+ * 주요 도시 퀵 검색 버튼을 생성하고 이벤트 리스너를 연결합니다.
+ */
+function renderQuickSearchButtons() {
+    quickButtonsContainer.innerHTML = ''; // 기존 버튼 모두 제거
+    
+    KOREAN_MAJOR_CITIES.forEach(city => {
+        const button = document.createElement('button');
+        
+        // 도시 이름 표기 (사용자에게는 한글로 보여주는 것이 친절합니다.)
+        let displayCity = city;
+        if (city === 'Seoul') displayCity = '서울';
+        else if (city === 'Busan') displayCity = '부산';
+        else if (city === 'Incheon') displayCity = '인천';
+        else if (city === 'Daegu') displayCity = '대구';
+        else if (city === 'Daejeon') displayCity = '대전';
+        else if (city === 'Gwangju') displayCity = '광주';
+        else if (city === 'Ulsan') displayCity = '울산';
+        else if (city === 'Jeju') displayCity = '제주';
+        
+        button.textContent = displayCity;
+        button.className = 'quick-city-button'; 
+        
+        // 버튼 클릭 시 해당 도시 (영문)로 검색 실행
+        button.addEventListener('click', () => {
+            cityInput.value = city; // 입력창에 영문 도시 이름 채우기
+            fetchCurrentWeather(city);
+            fetchForecast(city); 
+        });
+        
+        quickButtonsContainer.appendChild(button);
+    });
 }
