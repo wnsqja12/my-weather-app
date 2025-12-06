@@ -286,3 +286,34 @@ function clearForecastAndRecentSearches() {
     
     // 이외에 공기질 등 다른 동적 영역이 있다면 여기에 초기화 코드를 추가합니다.
 }
+
+// script.js (함수 정의 영역에 추가)
+
+/**
+ * 온도에 따라 추천 옷차림 멘트를 생성하여 화면에 표시합니다.
+ * @param {number} temp - 현재 온도 (섭씨 기준)
+ */
+function recommendOutfit(temp) {
+    let recommendation = "";
+    
+    // 온도 로직 (섭씨 기준)
+    if (temp <= 4) {
+        recommendation = "🧤 추위 최악! 두꺼운 패딩과 목도리 필수입니다.";
+    } else if (temp <= 9) {
+        recommendation = "🧥 코트, 경량 패딩으로 보온하세요.";
+    } else if (temp <= 16) {
+        recommendation = "🧣 트렌치코트나 두꺼운 가디건이 적당합니다.";
+    } else if (temp <= 22) {
+        recommendation = "👚 얇은 긴팔이나 블라우스, 겉옷은 생략해도 좋아요.";
+    } else if (temp <= 27) {
+        recommendation = "👕 반팔, 반바지, 시원한 옷차림으로!";
+    } else {
+        recommendation = "🔥 무더위, 민소매와 양산을 준비하세요.";
+    }
+    
+    // 전역 변수(extensionFeatureDisplay)에 결과 표시
+    const extensionFeatureDisplay = document.getElementById('extension-feature');
+    if (extensionFeatureDisplay) {
+        extensionFeatureDisplay.innerHTML = `**오늘의 패션 추천:** ${recommendation}`;
+    }
+}

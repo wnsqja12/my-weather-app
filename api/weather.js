@@ -14,7 +14,7 @@ module.exports = async (req, res) => {
     }
 
     // 2. OpenWeatherMap API URL 구성 (Key는 서버에서 안전하게 사용)
-    const OWM_URL = `https://api.openweathermap.org/data/2.5/${endpoint}?q=${city}&appid=${API_KEY}&units=${units || 'metric'}&lang=kr`;
+    const OWM_URL = `https://api.openweathermap.org/data/2.5/${endpoint}?q=${city},KR&appid=${API_KEY}&units=${units || 'metric'}&lang=kr`;
 
     try {
         // 3. 서버가 OWM API를 호출
