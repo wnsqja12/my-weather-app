@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>나만의 날씨 예보</title>
+    <link rel="stylesheet" href="style.css"> 
+</head>
+<body>
+    <div id="app-container">
+        <header>
+            <div id="search-box">
+                <input type="text" id="city-input" placeholder="도시 이름을 입력하세요 (예: Seoul)">
+                <button id="search-button">검색</button>
+                <button id="unit-toggle-button" data-unit="C">°C / °F</button>
+            </div>
+        </header>
+
+        <main id="weather-display">
+            <section id="current-weather">
+                <h2 id="city-name">날씨 정보를 로딩 중...</h2> 
+        
+                <div id="main-info">
+                    <p id="temp">--°C</p> <p id="description">날씨 상태</p> <div id="icon-placeholder">
+                        <img src="" alt="날씨 아이콘" id="weather-icon"> </div>
+                </div>
+        
+                <div id="details-info">
+                    <p>습도: <span id="humidity">--%</span></p>
+                    <p>풍속: <span id="wind-speed">--m/s</span></p>
+                    <p id="extension-feature"></p>
+                </div>
+            </section>
+            
+            <hr>
+            
+            <section id="forecast">
+                <h3>5일 단기 예보</h3>
+                <div id="forecast-cards-container" class="scrollable-h">
+                </div>
+            </section>
+            
+        </main>
+
+        <aside id="recent-searches">
+            <h3>최근 검색 도시</h3>
+            <div id="recent-city-buttons">
+            </div>
+        </aside>
+
+        <footer id="logo-footer">
+            <p>Powered by: HTML, CSS, Vanilla JS</p>
+        </footer>
+    </div>
+    <script src="script.js" defer></script> 
+</body>
+</html>
