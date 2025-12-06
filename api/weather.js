@@ -17,7 +17,7 @@ module.exports = async (req, res) => {
     const encodedCity = encodeURIComponent(city); 
 
     // OWM URL 구성: 인코딩된 도시 이름을 사용
-    const OWM_URL = `https://api.openweathermap.org/data/2.5/${endpoint}?q=${encodedCity},KR&appid=${API_KEY}&units=${units || 'metric'}&lang=kr`;
+    const OWM_URL = `https://api.openweathermap.org/data/2.5/${endpoint}?q=${encodedCity},&appid=${API_KEY}&units=${units || 'metric'}&lang=kr`;
 
     try {
         // 3. 서버가 OWM API를 호출
