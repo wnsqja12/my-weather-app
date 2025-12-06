@@ -28,19 +28,28 @@ let currentUnit = 'metric'; // 'metric' (섭씨) 또는 'imperial' (화씨)
  * 현재 날씨 데이터를 API에서 가져와 화면에 렌더링하는 함수
  * @param {string} city - 검색할 도시 이름
  */
+// script.js (fetchCurrentWeather 함수 수정)
+
 async function fetchCurrentWeather(city) {
-    // 1. API URL 구성
     const currentWeatherUrl = `${PROXY_BASE_URL}?city=${city}&units=${currentUnit}&endpoint=weather`;
     
     try {
-        // 2. 데이터 요청 (fetch)
         const response = await fetch(currentWeatherUrl);
         
         // 3. 오류 처리 (404 Not Found 등)
         if (!response.ok) {
-            // response.statusText 대신 JSON 응답에서 메시지를 추출하는 것이 더 정확할 수 있습니다.
             const errorData = await response.json();
-            throw new Error(errorData.message || `도시를 찾을 수 없습니다: ${city}`);
+            let errorMessage = ''; // 오류 메시지 변수 선언
+            
+            // ⭐ 삼항 연산자 대신 If/Else 구문 사용 (수정된 부분)
+            if (errorData.message && errorData.message.includes('not found')) {
+                errorMessage = `'${city}'에 대한 날씨 정보를 찾을 수 없습니다. 도시 이름을 확인해 주세요.`;
+            } else {
+                errorMessage = `데이터 로드 중 오류 발생: ${errorData.message || response.statusText}`;
+            }
+            
+            // 오류 발생 시 throw를 통해 catch 블록으로 이동
+            throw new Error(errorMessage);
         }
         
         // 4. JSON 파싱
@@ -53,11 +62,25 @@ async function fetchCurrentWeather(city) {
         saveRecentSearch(data.name); 
 
     } catch (error) {
-        // 7. 오류 메시지 표시
-        cityNameDisplay.textContent = `오류: ${error.message}`;
-        // 나머지 요소 초기화
+        // ... (catch 블록 코드는 이전과 동일하게 유지)
+        cityNameDisplay.textContent = `🚨 ${error.message}`; 
+        
+        // 나머지 요소 초기화 (화면을 깨끗하게 만듦)
         tempDisplay.textContent = '--°C';
-        descriptionDisplay.textContent = '데이터 없음';
+        descriptionDisplay.textContent = '정보 없음';
+        iconDisplay.src = '';
+        humidityDisplay.textContent = '--%';
+        windSpeedDisplay.textContent = '--m/s';
+        
+        // 확장 기능 영역 초기화
+        const extensionFeatureDisplay = document.getElementById('extension-feature');
+        if (extensionFeatureDisplay) {
+            extensionFeatureDisplay.innerHTML = '날씨 정보를 검색해주세요.';
+        }
+        
+        // 예보와 최근 검색어 초기화 함수 호출
+        clearForecastAndRecentSearches(); 
+        
         console.error("API 호출 중 오류 발생:", error);
     }
 }
@@ -248,4 +271,15 @@ function renderRecentSearches(cities) {
         
         recentButtonsContainer.appendChild(button);
     });
+}
+
+// script.js (함수 정의 영역에 추가)
+
+/**
+ * 날씨 검색 실패 시 예보 영역을 초기화하는 함수
+ */
+function clearForecastAndRecentSearches() {
+    forecastContainer.innerHTML = ''; // 예보 카드 영역 초기화
+    
+    // 이외에 공기질 등 다른 동적 영역이 있다면 여기에 초기화 코드를 추가합니다.
 }
