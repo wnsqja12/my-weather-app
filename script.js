@@ -114,6 +114,9 @@ function renderCurrentWeather(data) {
     // 💡 시각적 변화: 날씨/시간에 따른 배경/아이콘 변화 (3단계 CSS에 추가)
     // 예: document.body.className = iconCode.includes('n') ? 'night' : 'day';
     // 이 부분은 3단계 CSS에 .night 클래스를 추가하여 구현합니다.
+    // ⭐ ⭐ ⭐ 추가: 옷차림 추천 함수 호출 (섭씨 기준으로 전달)
+    let tempC = (currentUnit === 'metric') ? temp : Math.round((temp - 32) * 5 / 9);
+    recommendOutfit(tempC);
 }
 
 // 1. 검색 버튼 클릭 이벤트
