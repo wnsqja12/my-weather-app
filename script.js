@@ -150,8 +150,12 @@ function renderCurrentWeather(data) {
     // 2. 낮/밤 시간대 결정 (아이콘 코드 끝이 'n'이면 밤)
     const timeOfDay = iconCode.slice(-1) === 'n' ? 'night' : 'day';
     
-    // 3. body 태그에 클래스 적용 (기존 클래스 덮어쓰기)
-    document.body.className = `${weatherClass} ${timeOfDay}`;
+// ⭐️ ⭐ ⭐ 수정 핵심: body 대신 #current-weather에 클래스 적용 ⭐ ⭐ ⭐
+    const currentWeatherSection = document.getElementById('current-weather');
+    if (currentWeatherSection) {
+        // 기존 클래스를 모두 제거하고 새로운 클래스를 할당
+        currentWeatherSection.className = `weather-section ${weatherClass} ${timeOfDay}`;
+    }
 }
 
 // 1. 검색 버튼 클릭 이벤트
