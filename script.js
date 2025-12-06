@@ -103,6 +103,7 @@ function renderCurrentWeather(data) {
     const iconCode = data.weather[0].icon;
     const humidity = data.main.humidity;
     const windSpeed = data.wind.speed;
+    
 
     // 단위 설정
     const unitSymbol = currentUnit === 'metric' ? '°C' : '°F';
@@ -125,6 +126,32 @@ function renderCurrentWeather(data) {
     // ⭐ ⭐ ⭐ 추가: 옷차림 추천 함수 호출 (섭씨 기준으로 전달)
     let tempC = (currentUnit === 'metric') ? temp : Math.round((temp - 32) * 5 / 9);
     recommendOutfit(tempC);
+
+    // ⭐️ 배경 클래스 결정 로직
+    let weatherClass = '';
+    
+    // 1. 날씨 유형 기반 클래스 결정
+    const weatherMain = data.weather[0].main.toLowerCase();
+    
+    if (weatherMain.includes('clear')) {
+        weatherClass = 'clear';
+    } else if (weatherMain.includes('cloud')) {
+        weatherClass = 'clouds';
+    } else if (weatherMain.includes('rain') || weatherMain.includes('drizzle')) {
+        weatherClass = 'rain';
+    } else if (weatherMain.includes('snow')) {
+        weatherClass = 'snow';
+    } else if (weatherMain.includes('thunderstorm')) {
+        weatherClass = 'thunderstorm';
+    } else if (weatherMain.includes('mist') || weatherMain.includes('fog')) {
+        weatherClass = 'mist';
+    }
+
+    // 2. 낮/밤 시간대 결정 (아이콘 코드 끝이 'n'이면 밤)
+    const timeOfDay = iconCode.slice(-1) === 'n' ? 'night' : 'day';
+    
+    // 3. body 태그에 클래스 적용 (기존 클래스 덮어쓰기)
+    document.body.className = `${weatherClass} ${timeOfDay}`;
 }
 
 // 1. 검색 버튼 클릭 이벤트
