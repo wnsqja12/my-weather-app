@@ -39,6 +39,7 @@ let currentUnit = 'metric'; // 'metric' (섭씨) 또는 'imperial' (화씨)
 // script.js (fetchCurrentWeather 함수 수정)
 
 async function fetchCurrentWeather(city) {
+    setWeatherDisplayLoading(true); // ⭐️ 1. 로딩 시작
     const currentWeatherUrl = `${PROXY_BASE_URL}?city=${city}&units=${currentUnit}&endpoint=weather`;
     
     try {
@@ -90,6 +91,8 @@ async function fetchCurrentWeather(city) {
         clearForecastAndRecentSearches(); 
         
         console.error("API 호출 중 오류 발생:", error);
+    } finally {
+        setWeatherDisplayLoading(false); // ⭐️ 2. 로딩 종료 (성공 또는 실패와 무관)
     }
 }
 
@@ -107,6 +110,7 @@ function renderCurrentWeather(data) {
 
     // 단위 설정
     const unitSymbol = currentUnit === 'metric' ? '°C' : '°F';
+    const windUnitSymbol = currentUnit === 'metric' ? 'm/s' : 'mph';
     
     // DOM 업데이트
     cityNameDisplay.textContent = data.name;
@@ -118,7 +122,7 @@ function renderCurrentWeather(data) {
     iconDisplay.alt = description;
     
     humidityDisplay.textContent = `${humidity}%`;
-    windSpeedDisplay.textContent = `${windSpeed}m/s`; // (단위를 imperial로 바꾸면 mph로 표시하는 로직 추가 필요)
+    windSpeedDisplay.textContent = `${windSpeed}${windUnitSymbol}`;
 
     // 💡 시각적 변화: 날씨/시간에 따른 배경/아이콘 변화 (3단계 CSS에 추가)
     // 예: document.body.className = iconCode.includes('n') ? 'night' : 'day';
@@ -196,8 +200,7 @@ unitToggleButton.addEventListener('click', () => {
 // 페이지 로드 시 기본 도시 날씨 표시 (예: 서울)
 document.addEventListener('DOMContentLoaded', () => {
     renderQuickSearchButtons();
-    fetchCurrentWeather('Seoul');
-    fetchForecast('Seoul');
+    loadWeatherByGeolocation(); // ⭐️ Geolocation 로드 함수 호출
     loadRecentSearches(); // LocalStorage에서 최근 검색어 로드
 });
 
@@ -392,4 +395,98 @@ function renderQuickSearchButtons() {
         
         quickButtonsContainer.appendChild(button);
     });
+}
+
+function setWeatherDisplayLoading(isLoading) {
+    const defaultCityText = '날씨 정보를 로딩 중...';
+
+    if (isLoading) {
+        cityNameDisplay.textContent = '...검색 중...';
+        tempDisplay.textContent = '로딩 중';
+        descriptionDisplay.textContent = '데이터 가져오는 중';
+        iconDisplay.src = ''; // 아이콘 지우기
+        searchButton.disabled = true; // 버튼 비활성화
+        unitToggleButton.disabled = true;
+        // 다른 UI 초기화/로딩 상태 설정
+    } else {
+        searchButton.disabled = false; // 버튼 활성화
+        unitToggleButton.disabled = false;
+        // cityNameDisplay.textContent는 API 응답 후 덮어써지므로 별도 복구 불필요
+    }
+}
+
+function loadWeatherByGeolocation() {
+    // Geolocation 지원 여부 확인
+    if (navigator.geolocation) {
+        cityNameDisplay.textContent = '현재 위치 감지 중...';
+        
+        // ⭐️ 위치 정보 요청 성공 시의 콜백
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
+                
+                // ⭐️ 성공 시: 좌표를 사용하여 API 호출
+                fetchWeatherByCoords(lat, lon);
+            },
+            // ⭐️ 위치 정보 요청 실패 시의 콜백 (권한 거부, 타임아웃 등)
+            (error) => {
+                console.warn(`Geolocation Error (${error.code}): ${error.message}`);
+                // 실패 시 'Seoul'을 기본값으로 로드
+                cityInput.value = 'Seoul';
+                fetchCurrentWeather('Seoul');
+                fetchForecast('Seoul');
+            },
+            // 옵션: 캐시된 위치 정보의 유효 기간(60초), 타임아웃(10초) 설정
+            { enableHighAccuracy: true, maximumAge: 60000, timeout: 10000 } 
+        );
+    } else {
+        // 브라우저가 Geolocation을 지원하지 않을 경우
+        cityNameDisplay.textContent = 'Geolocation 미지원';
+        cityInput.value = 'Seoul';
+        fetchCurrentWeather('Seoul');
+        fetchForecast('Seoul');
+    }
+}
+
+// script.js (새 함수: 좌표 기반 검색 실행)
+/**
+ * 위도와 경도를 사용하여 날씨 데이터를 가져와 렌더링하는 함수
+ */
+async function fetchWeatherByCoords(lat, lon) {
+    // ⭐️ 1. 현재 날씨 요청
+    const currentWeatherUrl = `${PROXY_BASE_URL}?lat=${lat}&lon=${lon}&units=${currentUnit}&endpoint=weather`;
+    // ⭐️ 2. 예보 요청
+    const forecastUrl = `${PROXY_BASE_URL}?lat=${lat}&lon=${lon}&units=${currentUnit}&endpoint=forecast`;
+    
+    // 로딩 시작
+    setWeatherDisplayLoading(true);
+
+    try {
+        const [currentResponse, forecastResponse] = await Promise.all([
+            fetch(currentWeatherUrl),
+            fetch(forecastUrl)
+        ]);
+        
+        const currentData = await currentResponse.json();
+        const forecastData = await forecastResponse.json();
+        
+        if (!currentResponse.ok || !forecastResponse.ok) {
+            // 오류 처리
+            throw new Error(currentData.message || forecastData.message || '날씨 데이터를 찾을 수 없습니다.');
+        }
+
+        // 렌더링
+        renderCurrentWeather(currentData);
+        renderForecast(forecastData);
+        
+        // 좌표 기반 검색 성공 시, OWM이 반환한 도시 이름을 최근 검색어에 저장
+        saveRecentSearch(currentData.name); 
+
+    } catch (error) {
+        cityNameDisplay.textContent = `🚨 위치 날씨 로드 오류: ${error.message}`;
+        // ... (기존 catch 블록과 동일한 초기화 로직 적용)
+    } finally {
+        setWeatherDisplayLoading(false); // 로딩 종료
+    }
 }
